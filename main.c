@@ -82,8 +82,47 @@ void placeMarkByHumanPlayer(int gameBoard[SIZE][SIZE], int mark) {
 /* Return 1 if there is a winner in the game, otherwise return 0 */
 /* Note: the winner is the current player indicated in main() */
 int hasWinner(int gameBoard[SIZE][SIZE]) {
-
-  return 0;
+   // Check rows
+   for (int i = 0; i < 4; i++) {
+      int winner = gameBoard[i][0];
+      if (winner == EMPTY) continue;
+      if (gameBoard[i][1] == winner && gameBoard[i][2] == winner && gameBoard[i][3] == winner) {
+         return winner;
+      }
+   }
+   // Check columns
+   for (int j = 0; j < 4; j++) {
+      int winner = gameBoard[0][j];
+      if (winner == EMPTY) continue;
+      if (gameBoard[1][j] == winner && gameBoard[2][j] == winner && gameBoard[3][j] == winner) {
+         return winner;
+      }
+   }
+   // Check main diagonal
+   int winner = gameBoard[0][0];
+   if (winner != EMPTY) {
+      if (gameBoard[1][1] == winner && gameBoard[2][2] == winner && gameBoard[3][3] == winner) {
+         return winner;
+      }
+   }
+   // Check anti-diagonal
+   winner = gameBoard[0][3];
+   if (winner != EMPTY) {
+      if (gameBoard[1][2] == winner && gameBoard[2][1] == winner && gameBoard[3][0] == winner) {
+         return winner;
+      }
+   }
+   // Check 2x2 squares
+   for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+         winner = gameBoard[i][j];
+         if (winner == EMPTY) continue;
+         if (gameBoard[i][j+1] == winner && gameBoard[i+1][j] == winner && gameBoard[i+1][j+1] == winner) {
+            return winner;
+         }
+      }
+   }
+   return 0;
 }
 
 /* Determine the next move of the computer player.
@@ -158,20 +197,53 @@ int main()
     //placeMarkByHumanPlayer(gameBoard, CROSS);
 
    printGameBoard(gameBoard);
+   currentPlayer = 1;
+   while(1) {
+      if (currentPlayer == 1 || (currentPlayer == 2 && numOfHumanPlayers == 2)) {
+         placeMarkByHumanPlayer(gameBoard, currentPlayer == 1 ? CIRCLE : CROSS);
+      } else {
+         placeMarkByComputerPlayer(gameBoard, CROSS);
+      }
+      round++;
+      printGameBoard(gameBoard);
+
+      if (hasWinner(gameBoard)) {
+         if (currentPlayer == 1) {
+            printf("Player 1 wins! Congratulations!");
+         } else {
+            if (numOfHumanPlayers == 2) {
+               printf("Player 2 wins! Congratulations!");
+            } else {
+               printf("Computer wins!");
+            }
+         }
+         break;
+      }
+
+      if (round == 8) {
+         printf("Draw game!");
+         break;
+      }
+
+      currentPlayer = currentPlayer == 1 ? 2 : 1;
+   }
+
+
+   /*printGameBoard(gameBoard);
    if (numOfHumanPlayers == 1) {
-      while (gameEnds < numOfHumanPlayers) {
+      while (1) {
          placeMarkByHumanPlayer(gameBoard, CIRCLE);
          printGameBoard(gameBoard);
          placeMarkByComputerPlayer(gameBoard, CROSS);
          printGameBoard(gameBoard);
       }
    } else if (numOfHumanPlayers == 2) {
-      while (gameEnds < numOfHumanPlayers) {
+      while (!gameEnds) {
          placeMarkByHumanPlayer(gameBoard, CIRCLE);
          printGameBoard(gameBoard);
          placeMarkByHumanPlayer(gameBoard, CROSS);
          printGameBoard(gameBoard);
       }
-   }
+   }*/
     return 0;
 }
