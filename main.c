@@ -35,7 +35,11 @@
 
 /* Initialize the game board by setting all 4x4=16 squares to EMPTY */
 void initGameBoard(int gameBoard[SIZE][SIZE]) {
-
+   for (int i = 0; i < SIZE; i++) {
+      for (int j = 0; j < SIZE; j++) {
+         gameBoard[i][j] = EMPTY;
+      }
+   }
 }
 
 
@@ -43,16 +47,35 @@ void initGameBoard(int gameBoard[SIZE][SIZE]) {
    You are required to follow exactly the output format stated in the project specification
  */
 void printGameBoard(int gameBoard[SIZE][SIZE]) {
-
-
+   int index;
+   printf("================\n");
+      for (int i = 0; i < SIZE; i++) {
+         for (int j = 0; j < SIZE; j++) {
+            index = (3 - i) * SIZE + (j + 1);
+            if (gameBoard[i][j] == EMPTY) {
+               printf("|%2d|", index);
+            } else if (gameBoard[i][j] == CIRCLE) {
+               printf("| O|");
+            } else {
+               printf("| X|");
+            }
+         }
+         printf("\n");
+      }
+   printf("================\n");
 }
 
 
 /* Ask the human player to place the mark.
    In Part 1, you can assume that the user input must be valid (i.e, an empty space between 1 and 16). */
 void placeMarkByHumanPlayer(int gameBoard[SIZE][SIZE], int mark) {
+   int index;
+   printf("Player %d, please place your mark [1-16]:\n", mark);
+   scanf("%d", &index);
 
-
+   int i = 3 - (index - 1) / 4; // row
+   int j = (index - 1) % 4; // col
+   gameBoard[i][j] = mark;
 }
 
 
@@ -67,8 +90,16 @@ int hasWinner(int gameBoard[SIZE][SIZE]) {
    You are required to implement the following strategy:
    place the mark in the first empty space scanning from 1 to 16. */
 void placeMarkByComputerPlayer(int gameBoard[SIZE][SIZE], int mark) {
-
-
+   int index;
+   for (index = 1; index < SIZE * SIZE; index++) {
+      int i = 3 - (index - 1) / 4;
+      int j = (index - 1) % 4;
+      if (gameBoard[i][j] == EMPTY) {
+         gameBoard[i][j] = mark;
+         break;
+      }
+   }
+   printf("Computer places the mark: %d\n", index);
 }
 
 /* Uncomment the following function for Part 2 implementation
@@ -126,5 +157,21 @@ int main()
     //printf("Player 2, please place your mark [1-16]:\n");
     //placeMarkByHumanPlayer(gameBoard, CROSS);
 
+   printGameBoard(gameBoard);
+   if (numOfHumanPlayers == 1) {
+      while (gameEnds < numOfHumanPlayers) {
+         placeMarkByHumanPlayer(gameBoard, CIRCLE);
+         printGameBoard(gameBoard);
+         placeMarkByComputerPlayer(gameBoard, CROSS);
+         printGameBoard(gameBoard);
+      }
+   } else if (numOfHumanPlayers == 2) {
+      while (gameEnds < numOfHumanPlayers) {
+         placeMarkByHumanPlayer(gameBoard, CIRCLE);
+         printGameBoard(gameBoard);
+         placeMarkByHumanPlayer(gameBoard, CROSS);
+         printGameBoard(gameBoard);
+      }
+   }
     return 0;
 }
